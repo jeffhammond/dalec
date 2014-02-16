@@ -7,7 +7,7 @@
 
 #include <stdarg.h>
 #include <dalecconf.h>
-#include <dalec_internals.h>
+#include <dalec_guts.h>
 
 enum debug_cats_e {
   DEBUG_CAT_ALL        =  -1,
