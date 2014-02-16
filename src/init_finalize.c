@@ -25,9 +25,18 @@
   *
   * @return            Zero on success
   */
-int PDALEC_Initialize(void) {
+int PDALEC_Initialize(void)
+{
+    /* Check for MPI initialization */
+    {
+        int mpi_is_init, mpi_is_fin;
+        MPI_Initialized(&mpi_is_init);
+        MPI_Finalized(&mpi_is_fin);
+        if (!mpi_is_init || mpi_is_fin)
+            DALECI_Error("MPI must be initialized before calling DALEC_Initialize");
+    }
 
-  return 0;
+    return 0;
 }
 
 /* -- begin weak symbols block -- */
@@ -45,8 +54,9 @@ int PDALEC_Initialize(void) {
   *
   * @return            Zero on success
   */
-int PDALEC_Finalize(void) {
+int PDALEC_Finalize(void)
+{
 
-  return 0;
+    return 0;
 }
 
