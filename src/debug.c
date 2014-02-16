@@ -7,7 +7,7 @@
 #include <stdarg.h>
 #include <mpi.h>
 
-#include <dalec_internals.h>
+#include <dalec_guts.h>
 #include <debug.h>
 
 /* Set the default debugging message classes to enable.
