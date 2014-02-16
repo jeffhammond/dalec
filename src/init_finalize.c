@@ -8,7 +8,11 @@
 #include <mpi.h>
 
 #include <dalec.h>
+#include <dalec_guts.h>
 #include <debug.h>
+
+MPI_Comm DALEC_COMM_WORLD;
+global_state_t DALECI_GLOBAL_STATE = { 0 };
 
 /* -- begin weak symbols block -- */
 #if defined(HAVE_PRAGMA_WEAK)
@@ -28,15 +32,22 @@
   */
 int PDALEC_Initialize(void)
 {
-    /* Check for MPI initialization */
+    if (DALECI_GLOBAL_STATE.alive == 0)
     {
-        int mpi_is_init, mpi_is_fin;
-        MPI_Initialized(&mpi_is_init);
-        MPI_Finalized(&mpi_is_fin);
-        if (!mpi_is_init || mpi_is_fin)
-            DALECI_Error("MPI must be initialized before calling DALEC_Initialize");
-    }
+        /* to be fully thread-safe, the alive check should be RMW */
+        DALECI_GLOBAL_STATE.alive = 1;
 
+        /* Check for MPI initialization */
+        {
+            int mpi_is_init, mpi_is_fin;
+            MPI_Initialized(&mpi_is_init);
+            MPI_Finalized(&mpi_is_fin);
+            if (!mpi_is_init || mpi_is_fin)
+                DALECI_Error("MPI must be active when calling DALEC_Initialize");
+        }
+
+        MPI_Comm_dup(MPI_COMM_WORLD, &DALEC_COMM_WORLD);
+    }
     return 0;
 }
 
@@ -57,7 +68,21 @@ int PDALEC_Initialize(void)
   */
 int PDALEC_Finalize(void)
 {
+    /* to be fully thread-safe, the alive check should be RMW */
+    (DALECI_GLOBAL_STATE.alive)--;
 
+    if (DALECI_GLOBAL_STATE.alive == 1)
+    {
+        /* Check for MPI initialization */
+        {
+            int mpi_is_init, mpi_is_fin;
+            MPI_Initialized(&mpi_is_init);
+            MPI_Finalized(&mpi_is_fin);
+            if (!mpi_is_init || mpi_is_fin)
+                DALECI_Error("MPI must be active when calling DALEC_Finalize");
+        }
+        MPI_Comm_free(&DALEC_COMM_WORLD);
+    }
     return 0;
 }
 

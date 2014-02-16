@@ -44,12 +44,14 @@
 enum DALECI_Op_e { DALECI_OP_PUT, DALECI_OP_GET, DALECI_OP_ACC };
 
 typedef struct {
-  int           verbose;                /* DALEC should produce extra status output                             */
+    int           alive;                /* DALEC has been initialized but not finalized */
+    int           verbose;              /* DALEC should produce extra status output     */
 } global_state_t;
 
 
 /* Global data */
 
+extern MPI_Comm       DALEC_COMM_WORLD;
 extern global_state_t DALECI_GLOBAL_STATE;
 
 /* Utility functions */

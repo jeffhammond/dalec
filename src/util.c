@@ -16,12 +16,12 @@
   */
 void DALEC_Error(char *msg, int code) {
     int rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_rank(DALEC_COMM_WORLD, &rank);
 
     fprintf(stderr, "[%d] DALEC Error: %s\n", rank, msg);
     fflush(NULL);
 
-    MPI_Abort(MPI_COMM_WORLD, code);
+    MPI_Abort(DALEC_COMM_WORLD, code);
 
     return;
 }
