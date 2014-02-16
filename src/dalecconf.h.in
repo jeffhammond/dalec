@@ -1,16 +1,13 @@
-/* src/armciconf.h.in.  Generated from configure.ac by autoheader.  */
+/* src/dalecconf.h.in.  Generated from configure.ac by autoheader.  */
 
 /* -*- Mode: C; c-basic-offset:4 ; -*- */
 /*
  *  (C) 2010 by Argonne National Laboratory.
  *      See COPYRIGHT in top-level directory.
  */
-#ifndef _ARMCICONF_H_
-#define _ARMCICONF_H_
+#ifndef _DALECCONF_H_
+#define _DALECCONF_H_
 
-
-/* Defined when ARMCI subset-collective group formation is enabled */
-#undef ARMCI_GROUP
 
 /* define if the compiler defines __FUNC__ */
 #undef HAVE_CAP__FUNC__
@@ -132,4 +129,4 @@
    such a type exists and the standard includes do not define it. */
 #undef uint8_t
 
-#endif /* _ARMCICONF_H_ */
+#endif /* _DALECCONF_H_ */
