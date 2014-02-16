@@ -10,7 +10,8 @@ lib_LTLIBRARIES = libdalec.la
 # Needed to connect with the GA build system
 noinst_LTLIBRARIES = libdaleci.la
 
-libdalec_la_SOURCES = src/init_finalize.c 
+libdalec_la_SOURCES = src/init_finalize.c \
+		      src/pdalec.c
 
 libdalec_la_LDFLAGS = -version-info $(libdalec_abi_version)
 

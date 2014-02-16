@@ -5,7 +5,7 @@
 /* If no weak symbols support */
 #if !defined(HAVE_PRAGMA_WEAK) && !defined(HAVE_PRAGMA_HP_SEC_DEF) && !defined(HAVE_PRAGMA_CRI_DUP)
 
-#include "armci.h"
+#include "dalec.h"
 
 #pragma weak DALEC_Initialize
 int DALEC_Initialize(void) {
