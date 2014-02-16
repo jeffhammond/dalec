@@ -7,16 +7,13 @@
 #include <assert.h>
 
 #include <mpi.h>
-#include <armci.h>
+#include <dalec.h>
 
 int main(int argc, char ** argv) {
   MPI_Init(&argc, &argv);
-  ARMCI_Init();
-
-  ARMCI_Get(NULL, NULL, 1, 0);
-
-  ARMCI_Finalize();
+  DALEC_Initialize();
+  assert(0);
+  DALEC_Finalize();
   MPI_Finalize();
-
   return 0;
 }
