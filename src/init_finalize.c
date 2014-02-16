@@ -8,6 +8,7 @@
 #include <mpi.h>
 
 #include <dalec.h>
+#include <debug.h>
 
 /* -- begin weak symbols block -- */
 #if defined(HAVE_PRAGMA_WEAK)

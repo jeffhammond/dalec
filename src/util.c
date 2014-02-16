@@ -8,10 +8,8 @@
 #include <mpi.h>
 
 #include <dalec.h>
-#include <dalec_internals.h>
+#include <dalec_guts.h>
 #include <debug.h>
-#include <gmr.h>
-
 
 /** Fatal error, print the message and abort the program with the provided
   * error code.
@@ -23,7 +21,7 @@ void DALEC_Error(char *msg, int code) {
     fprintf(stderr, "[%d] DALEC Error: %s\n", rank, msg);
     fflush(NULL);
 
-    MPI_Abort(DALEC_GROUP_WORLD.comm, code);
+    MPI_Abort(MPI_COMM_WORLD, code);
 
     return;
 }

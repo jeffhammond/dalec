@@ -25,7 +25,6 @@ unsigned DEBUG_CATS_ENABLED =
   */
 void DALECI_Assert_fail(const char *expr, const char *msg, const char *file, int line, const char *func) {
   int rank;
-
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
   if (msg == NULL)
@@ -73,8 +72,11 @@ void DALECI_Dbg_print_impl(const char *func, const char *format, ...) {
   int  disp;
   char string[500];
 
+  int rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
   disp  = 0;
-  disp += snprintf(string, 500, "[%d] %s: ", DALEC_GROUP_WORLD.rank, func);
+  disp += snprintf(string, 500, "[%d] %s: ", rank, func);
   va_start(etc, format);
   disp += vsnprintf(string+disp, 500-disp, format, etc);
   va_end(etc);
@@ -90,8 +92,11 @@ void DALECI_Warning(const char *fmt, ...) {
   int  disp;
   char string[500];
 
+  int rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
   disp  = 0;
-  disp += snprintf(string, 500, "[%d] DALEC Warning: ", DALEC_GROUP_WORLD.rank);
+  disp += snprintf(string, 500, "[%d] DALEC Warning: ", rank);
   va_start(etc, fmt);
   disp += vsnprintf(string+disp, 500-disp, fmt, etc);
   va_end(etc);
@@ -99,3 +104,30 @@ void DALECI_Warning(const char *fmt, ...) {
   fprintf(stderr, "%s", string);
   fflush(NULL);
 }
+
+/** Raise an internal fatal DALEC error.
+  *
+  * @param[in] file Current file name (__FILE__)
+  * @param[in] line Current line numeber (__LINE__)
+  * @param[in] func Current function name (__func__)
+  * @param[in] msg  Message to be printed
+  * @param[in] code Exit error code
+  */
+void DALECI_Error_impl(const char *file, const int line, const char *func, const char *msg, ...) {
+  va_list ap;
+  int  disp;
+  char string[500];
+
+  int rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+  disp  = 0;
+  va_start(ap, msg);
+  disp += vsnprintf(string, 500, msg, ap);
+  va_end(ap);
+
+  fprintf(stderr, "[%d] DALEC Internal error in %s (%s:%d)\n[%d] Message: %s\n", rank,
+      func, file, line, rank, string);
+  MPI_Abort(MPI_COMM_WORLD, 100);
+}
+
