@@ -1,0 +1,40 @@
+# Compiled Object files
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.x
+
+Makefile.in
+aclocal.m4
+autom4te.cache
+configure
+compile
+config.guess
+config.sub
+depcomp
+install-sh
+missing
+lt~obsolete.m4
+ltversion.m4
+ltsugar.m4
+ltoptions.m4
+ltmain.sh
+libtool.m4
+config.h.in~
+m4/ar-lib
+m4/test-driver
+src/dalecconf.h.in~
+build/
