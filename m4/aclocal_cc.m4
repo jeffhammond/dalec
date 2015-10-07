@@ -503,8 +503,9 @@ if test "$enable_strict_done" != "yes" ; then
 	-Wno-type-limits
     "
 
-    enable_c89=yes
-    enable_c99=no
+    enable_c89=no
+    enable_c99=yes
+    enable_c11=no
     enable_posix=yes
     enable_opt=yes
     flags="`echo $1 | sed -e 's/:/ /g' -e 's/,/ /g'`"
@@ -517,6 +518,10 @@ if test "$enable_strict_done" != "yes" ; then
 	     c99)
 		enable_strict_done="yes"
 		enable_c99=yes
+		;;
+	     c11)
+		enable_strict_done="yes"
+		enable_c11=yes
 		;;
 	     posix)
 		enable_strict_done="yes"
@@ -536,7 +541,7 @@ if test "$enable_strict_done" != "yes" ; then
 		;;
 	     all|yes)
 		enable_strict_done="yes"
-		enable_c89=yes
+		enable_c99=yes
 		enable_posix=yes
 		enable_opt=yes
 	        ;;
@@ -563,7 +568,9 @@ if test "$enable_strict_done" != "yes" ; then
        fi
        # We only allow one of strict-C99 or strict-C89 to be
        # enabled. If C99 is enabled, we automatically disable C89.
-       if test "${enable_c99}" = "yes" ; then
+       if test "${enable_c11}" = "yes" ; then
+       	  PAC_APPEND_FLAG([-std=c11],[pac_cc_strict_flags])
+       elif test "${enable_c99}" = "yes" ; then
        	  PAC_APPEND_FLAG([-std=c99],[pac_cc_strict_flags])
        elif test "${enable_c89}" = "yes" ; then
        	  PAC_APPEND_FLAG([-std=c89],[pac_cc_strict_flags])
