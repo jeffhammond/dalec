@@ -11,8 +11,7 @@
 #include <dalec_guts.h>
 #include <debug.h>
 
-MPI_Comm DALEC_COMM_WORLD;
-global_state_t DALECI_GLOBAL_STATE = { 0 };
+dalec_global_state_t DALECI_GLOBAL_STATE = { 0 };
 
 /* -- begin weak symbols block -- */
 #if defined(HAVE_PRAGMA_WEAK)
@@ -46,7 +45,7 @@ int PDALEC_Initialize(void)
                 DALECI_Error("MPI must be active when calling DALEC_Initialize");
         }
 
-        MPI_Comm_dup(MPI_COMM_WORLD, &DALEC_COMM_WORLD);
+        MPI_Comm_dup(MPI_COMM_WORLD, &DALECI_GLOBAL_STATE.DALEC_COMM_WORLD);
     }
     return 0;
 }
@@ -81,7 +80,7 @@ int PDALEC_Finalize(void)
             if (!mpi_is_init || mpi_is_fin)
                 DALECI_Error("MPI must be active when calling DALEC_Finalize");
         }
-        MPI_Comm_free(&DALEC_COMM_WORLD);
+        MPI_Comm_free(&DALECI_GLOBAL_STATE.DALEC_COMM_WORLD);
     }
     return 0;
 }
