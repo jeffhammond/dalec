@@ -59,7 +59,8 @@ enum DALECI_Op_e { DALECI_OP_PUT, DALECI_OP_GET, DALECI_OP_ACC };
 typedef struct {
     atomic_int    alive;                /* DALEC has been initialized but not finalized */
     int           verbose;              /* DALEC should produce extra status output     */
-    MPI_Comm      mpi_comm;
+    MPI_Comm      mpi_comm;             /* MPI communicator from user (duped)           */
+    int           mpi_thread_level;     /* MPI thread level                             */
 } dalec_global_state_t;
 
 /* Global data */

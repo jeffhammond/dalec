@@ -36,10 +36,18 @@ int PDALEC_Initialize(MPI_Comm user_comm)
         if (!mpi_is_init || mpi_is_fin) {
             DALECI_Warning("MPI must be active when calling DALEC_Initialize");
             return DALEC_ERROR_MPI_USAGE;
-        } else {
-            int rc = MPI_Comm_dup(user_comm, &DALECI_GLOBAL_STATE.mpi_comm);
-            return DALECI_Check_MPI("PDALEC_Initialize", "MPI_Comm_dup", rc);
         }
+
+        /* Always dupe the user communicator for internal usage. */
+        /* Do not abort on MPI failure, let user handle if MPI does not abort. */
+        int rc = MPI_Comm_dup(user_comm, &DALECI_GLOBAL_STATE.mpi_comm);
+        return DALECI_Check_MPI("DALEC_Initialize", "MPI_Comm_dup", rc);
+
+        /* Determine what level of threading MPI supports. */
+        int mpi_thread_level;
+        MPI_Query_thread(&mpi_thread_level);
+        DALECI_GLOBAL_STATE.mpi_thread_level;
+
     } else {
         /* Library has already been initialized. */
         return DALEC_SUCCESS;
@@ -78,7 +86,7 @@ int PDALEC_Finalize(void)
             return DALEC_ERROR_MPI_USAGE;
         } else {
             int rc = MPI_Comm_free(&DALECI_GLOBAL_STATE.mpi_comm);
-            return DALECI_Check_MPI("PDALEC_Finalize", "MPI_Comm_free", rc);
+            return DALECI_Check_MPI("DALEC_Finalize", "MPI_Comm_free", rc);
         }
     } else {
         /* Library is still active. */
