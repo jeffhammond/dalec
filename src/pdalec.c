@@ -17,4 +17,10 @@ int DALEC_Finalize(void) {
   return PDALEC_Finalize();
 }
 
+#pragma weak DALEC_Error
+void DALEC_Error(char *msg, int code) {
+  PDALEC_Error(msg, code);
+  return;
+}
+
 #endif

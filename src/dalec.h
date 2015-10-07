@@ -9,10 +9,12 @@
 
 int   DALEC_Initialize(void);
 int   DALEC_Finalize(void);
+void  DALEC_Error(char *msg, int code);
 
 /* PDALEC -- Profiling Interface */
 
 int     PDALEC_Initialize(void);
 int     PDALEC_Finalize(void);
+void    PDALEC_Error(char *msg, int code);
 
 #endif /* _DALEC_H_ */
