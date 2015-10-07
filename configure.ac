@@ -125,7 +125,7 @@ if test "$ac_cv_prog_cc_c99" = "no" ; then
    AC_ERROR([C99 not supported by the compiler])
 fi
 
-AC_CHECK_HEADERS([execinfo.h stdint.h inttypes.h])
+AC_CHECK_HEADERS([execinfo.h stdint.h stdatomic.h inttypes.h])
 AC_TYPE_UINT8_T
 
 ## Debugging support

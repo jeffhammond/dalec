@@ -8,10 +8,23 @@
 #include <dalec.h>
 #include <dalecconf.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+
+#if   HAVE_STRING_H
+#include <string.h>
+#endif
+
 #if   HAVE_STDINT_H
 #  include <stdint.h>
 #elif HAVE_INTTYPES_H
 #  include <inttypes.h>
+#endif
+
+#if HAVE_STDATOMIC_H
+#  include <stdatomic.h>
+#else
+#error C11 atomics are required for now.
 #endif
 
 /* Likely/Unlikely macros borrowed from MPICH: */
@@ -44,9 +57,9 @@
 enum DALECI_Op_e { DALECI_OP_PUT, DALECI_OP_GET, DALECI_OP_ACC };
 
 typedef struct {
-    int           alive;                /* DALEC has been initialized but not finalized */
+    atomic_int    alive;                /* DALEC has been initialized but not finalized */
     int           verbose;              /* DALEC should produce extra status output     */
-    MPI_Comm      DALEC_COMM_WORLD;
+    MPI_Comm      mpi_comm;
 } dalec_global_state_t;
 
 /* Global data */
@@ -55,8 +68,9 @@ extern dalec_global_state_t DALECI_GLOBAL_STATE;
 
 /* Utility functions */
 
-char *DALECI_Getenv(char *varname);
-int   DALECI_Getenv_bool(char *varname, int default_value);
-int   DALECI_Getenv_int(char *varname, int default_value);
+int    DALECI_Check_MPI(const char * dfn, const char * mpifn, int mpirc);
+char * DALECI_Getenv(const char *varname);
+int    DALECI_Getenv_bool(const char *varname, int default_value);
+int    DALECI_Getenv_int(const char *varname, int default_value);
 
 #endif /* HAVE_DALEC_GUTS_H */

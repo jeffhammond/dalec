@@ -2,11 +2,6 @@
  * Copyright (C) 2010. See COPYRIGHT in top-level directory.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <mpi.h>
-
 #include <dalec.h>
 #include <dalec_guts.h>
 #include <debug.h>
@@ -14,21 +9,42 @@
 /** Fatal error, print the message and abort the program with the provided
   * error code.
   */
-void DALEC_Error(char *msg, int code)
+void DALEC_Error(const char *msg, int code)
 {
     int rank;
-    MPI_Comm_rank(DALECI_GLOBAL_STATE.DALEC_COMM_WORLD, &rank);
+    MPI_Comm_rank(DALECI_GLOBAL_STATE.mpi_comm, &rank);
 
     fprintf(stderr, "[%d] DALEC Error: %s\n", rank, msg);
     fflush(NULL);
 
-    MPI_Abort(DALECI_GLOBAL_STATE.DALEC_COMM_WORLD, code);
+    MPI_Abort(DALECI_GLOBAL_STATE.mpi_comm, code);
 
     return;
 }
 
+/** MPI error message
+  * error code.
+  */
+int DALECI_Check_MPI(const char * dfn, const char * mpifn, int mpirc)
+{
+    if (mpirc==MPI_SUCCESS) {
+        return DALEC_SUCCESS;
+    } else {
+        int rank;
+        MPI_Comm_rank(DALECI_GLOBAL_STATE.mpi_comm, &rank);
+
+        int len;
+        char errmsg[MPI_MAX_ERROR_STRING];
+        MPI_Error_string(mpirc, &errmsg, &len);
+
+        DALECI_Warning("%d: %s -> %s:\n %s \n", rank, dfn, mpifn, errmsg);
+
+        return DALEC_ERROR_MPI_LIBRARY;
+    }
+}
+
 /** Retrieve the value of a boolean environment variable.  */
-int DALECI_Getenv_bool(char *varname, int default_value)
+int DALECI_Getenv_bool(const char *varname, int default_value)
 {
   char *var = getenv(varname);
 
@@ -44,7 +60,7 @@ int DALECI_Getenv_bool(char *varname, int default_value)
 
 /** Retrieve the value of a environment variable.
   */
-char *DALECI_Getenv(char *varname)
+ char *DALECI_Getenv(const char *varname)
 {
   return getenv(varname);
 }
@@ -52,7 +68,7 @@ char *DALECI_Getenv(char *varname)
 
 /** Retrieve the value of an integer environment variable.
   */
-int DALECI_Getenv_int(char *varname, int default_value)
+int DALECI_Getenv_int(const char *varname, int default_value)
 {
   char *var = getenv(varname);
   if (var) {

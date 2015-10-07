@@ -39,6 +39,9 @@
 /* Supports weak pragma */
 #undef HAVE_PRAGMA_WEAK
 
+/* Define to 1 if you have the <stdatomic.h> header file. */
+#undef HAVE_STDATOMIC_H
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 

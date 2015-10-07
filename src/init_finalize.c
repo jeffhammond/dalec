@@ -2,11 +2,6 @@
  * Copyright (C) 2014. See COPYRIGHT in top-level directory.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <mpi.h>
-
 #include <dalec.h>
 #include <dalec_guts.h>
 #include <debug.h>
@@ -29,25 +24,26 @@ dalec_global_state_t DALECI_GLOBAL_STATE = { 0 };
   *
   * @return            Zero on success
   */
-int PDALEC_Initialize(void)
+int PDALEC_Initialize(MPI_Comm user_comm)
 {
-    if (DALECI_GLOBAL_STATE.alive == 0)
-    {
-        /* to be fully thread-safe, the alive check should be RMW */
-        DALECI_GLOBAL_STATE.alive = 1;
-
-        /* Check for MPI initialization */
-        {
-            int mpi_is_init, mpi_is_fin;
-            MPI_Initialized(&mpi_is_init);
-            MPI_Finalized(&mpi_is_fin);
-            if (!mpi_is_init || mpi_is_fin)
-                DALECI_Error("MPI must be active when calling DALEC_Initialize");
+    int dalec_alive = atomic_fetch_sub_explicit(&(DALECI_GLOBAL_STATE.alive),
+                                                1,memory_order_seq_cst);
+    if (dalec_alive == 0) {
+        /* Initialize, since this is the first call to this function. */
+        int mpi_is_init, mpi_is_fin;
+        MPI_Initialized(&mpi_is_init);
+        MPI_Finalized(&mpi_is_fin);
+        if (!mpi_is_init || mpi_is_fin) {
+            DALECI_Warning("MPI must be active when calling DALEC_Initialize");
+            return DALEC_ERROR_MPI_USAGE;
+        } else {
+            int rc = MPI_Comm_dup(user_comm, &DALECI_GLOBAL_STATE.mpi_comm);
+            return DALECI_Check_MPI("PDALEC_Initialize", "MPI_Comm_dup", rc);
         }
-
-        MPI_Comm_dup(MPI_COMM_WORLD, &DALECI_GLOBAL_STATE.DALEC_COMM_WORLD);
+    } else {
+        /* Library has already been initialized. */
+        return DALEC_SUCCESS;
     }
-    return 0;
 }
 
 /* -- begin weak symbols block -- */
@@ -67,21 +63,26 @@ int PDALEC_Initialize(void)
   */
 int PDALEC_Finalize(void)
 {
-    /* to be fully thread-safe, the alive check should be RMW */
-    (DALECI_GLOBAL_STATE.alive)--;
+    int dalec_alive = atomic_fetch_sub_explicit(&(DALECI_GLOBAL_STATE.alive),
+                                                1,memory_order_seq_cst);
 
-    if (DALECI_GLOBAL_STATE.alive == 1)
-    {
+    if (dalec_alive == 1) {
         /* Check for MPI initialization */
-        {
-            int mpi_is_init, mpi_is_fin;
-            MPI_Initialized(&mpi_is_init);
-            MPI_Finalized(&mpi_is_fin);
-            if (!mpi_is_init || mpi_is_fin)
-                DALECI_Error("MPI must be active when calling DALEC_Finalize");
+        int mpi_is_init, mpi_is_fin;
+        MPI_Initialized(&mpi_is_init);
+        MPI_Finalized(&mpi_is_fin);
+
+        /* Free communicator if possible and return */
+        if (!mpi_is_init || mpi_is_fin) {
+            DALECI_Warning("MPI must be active when calling DALEC_Finalize");
+            return DALEC_ERROR_MPI_USAGE;
+        } else {
+            int rc = MPI_Comm_free(&DALECI_GLOBAL_STATE.mpi_comm);
+            return DALECI_Check_MPI("PDALEC_Finalize", "MPI_Comm_free", rc);
         }
-        MPI_Comm_free(&DALECI_GLOBAL_STATE.DALEC_COMM_WORLD);
+    } else {
+        /* Library is still active. */
+        return DALEC_SUCCESS;
     }
-    return 0;
 }
 

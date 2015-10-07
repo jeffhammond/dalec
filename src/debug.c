@@ -2,11 +2,6 @@
  * Copyright (C) 2014. See COPYRIGHT in top-level directory.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <mpi.h>
-
 #include <dalec_guts.h>
 #include <debug.h>
 
@@ -25,7 +20,7 @@ unsigned DEBUG_CATS_ENABLED =
   */
 void DALECI_Assert_fail(const char *expr, const char *msg, const char *file, int line, const char *func) {
   int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_rank(DALECI_GLOBAL_STATE.mpi_comm, &rank);
 
   if (msg == NULL)
     fprintf(stderr, "[%d] DALEC assert fail in %s() [%s:%d]: \"%s\"\n", rank, func, file, line, expr);
@@ -61,7 +56,7 @@ void DALECI_Assert_fail(const char *expr, const char *msg, const char *file, int
     double stall = MPI_Wtime();
     while (MPI_Wtime() - stall < 1) ;
   }
-  MPI_Abort(MPI_COMM_WORLD, -1);
+  MPI_Abort(DALECI_GLOBAL_STATE.mpi_comm, -1);
 }
 
 
@@ -73,7 +68,7 @@ void DALECI_Dbg_print_impl(const char *func, const char *format, ...) {
   char string[500];
 
   int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_rank(DALECI_GLOBAL_STATE.mpi_comm, &rank);
 
   disp  = 0;
   disp += snprintf(string, 500, "[%d] %s: ", rank, func);
@@ -93,7 +88,7 @@ void DALECI_Warning(const char *fmt, ...) {
   char string[500];
 
   int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_rank(DALECI_GLOBAL_STATE.mpi_comm, &rank);
 
   disp  = 0;
   disp += snprintf(string, 500, "[%d] DALEC Warning: ", rank);
@@ -119,7 +114,7 @@ void DALECI_Error_impl(const char *file, const int line, const char *func, const
   char string[500];
 
   int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_rank(DALECI_GLOBAL_STATE.mpi_comm, &rank);
 
   disp  = 0;
   va_start(ap, msg);
@@ -128,6 +123,6 @@ void DALECI_Error_impl(const char *file, const int line, const char *func, const
 
   fprintf(stderr, "[%d] DALEC Internal error in %s (%s:%d)\n[%d] Message: %s\n", rank,
       func, file, line, rank, string);
-  MPI_Abort(MPI_COMM_WORLD, 100);
+  MPI_Abort(DALECI_GLOBAL_STATE.mpi_comm, 100);
 }
 

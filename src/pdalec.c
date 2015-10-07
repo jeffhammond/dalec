@@ -5,11 +5,11 @@
 /* If no weak symbols support */
 #if !defined(HAVE_PRAGMA_WEAK) && !defined(HAVE_PRAGMA_HP_SEC_DEF) && !defined(HAVE_PRAGMA_CRI_DUP)
 
-#include "dalec.h"
+#include <dalec.h>
 
 #pragma weak DALEC_Initialize
-int DALEC_Initialize(void) {
-  return PDALEC_Initialize();
+int DALEC_Initialize(MPI_Comm comm) {
+  return PDALEC_Initialize(comm);
 }
 
 #pragma weak DALEC_Finalize
@@ -18,7 +18,7 @@ int DALEC_Finalize(void) {
 }
 
 #pragma weak DALEC_Error
-void DALEC_Error(char *msg, int code) {
+void DALEC_Error(const char *msg, int code) {
   PDALEC_Error(msg, code);
   return;
 }
