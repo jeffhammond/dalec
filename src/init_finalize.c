@@ -15,6 +15,10 @@ dalec_global_state_t DALECI_GLOBAL_STATE = { 0 };
 #  pragma _HP_SECONDARY_DEF PDALEC_Init DALEC_Init
 #elif defined(HAVE_PRAGMA_CRI_DUP)
 #  pragma _CRI duplicate DALEC_Init as PDALEC_Init
+#elif defined(HAVE_WEAK_ATTRIBUTE)
+int DALEC_Initialize(MPI_Comm user_comm) __attribute__ ((weak, alias("PDALEC_Init")));
+#else
+#define DALEC_Initialize PDALEC_Initialize
 #endif
 /* -- end weak symbols block -- */
 
@@ -24,7 +28,7 @@ dalec_global_state_t DALECI_GLOBAL_STATE = { 0 };
   *
   * @return            Zero on success
   */
-int PDALEC_Initialize(MPI_Comm user_comm)
+int DALEC_Initialize(MPI_Comm user_comm)
 {
     int dalec_alive = atomic_fetch_sub_explicit(&(DALECI_GLOBAL_STATE.alive),
                                                 1,memory_order_seq_cst);
@@ -61,6 +65,10 @@ int PDALEC_Initialize(MPI_Comm user_comm)
 #  pragma _HP_SECONDARY_DEF PDALEC_Finalize DALEC_Finalize
 #elif defined(HAVE_PRAGMA_CRI_DUP)
 #  pragma _CRI duplicate DALEC_Finalize as PDALEC_Finalize
+#elif defined(HAVE_WEAK_ATTRIBUTE)
+int DALEC_Finalize(void) __attribute__ ((weak, alias("PDALEC_Finalize")));
+#else
+#define DALEC_Finalize PDALEC_Finalize
 #endif
 /* -- end weak symbols block -- */
 
@@ -69,7 +77,7 @@ int PDALEC_Initialize(MPI_Comm user_comm)
   *
   * @return            Zero on success
   */
-int PDALEC_Finalize(void)
+int DALEC_Finalize(void)
 {
     int dalec_alive = atomic_fetch_sub_explicit(&(DALECI_GLOBAL_STATE.alive),
                                                 1,memory_order_seq_cst);

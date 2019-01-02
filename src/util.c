@@ -6,6 +6,20 @@
 #include <dalec_guts.h>
 #include <debug.h>
 
+/* -- Begin Profiling Symbol Block for routine DALEC_Error */
+#if defined(HAVE_PRAGMA_WEAK)
+#pragma weak DALEC_Error = PDALEC_Error
+#elif defined(HAVE_PRAGMA_HP_SEC_DEF)
+#pragma _HP_SECONDARY_DEF PDALEC_Error  DALEC_Error
+#elif defined(HAVE_PRAGMA_CRI_DUP)
+#pragma _CRI duplicate DALEC_Error as PDALEC_Error
+#elif defined(HAVE_WEAK_ATTRIBUTE)
+int DALEC_Error(const char *msg, int code) __attribute__ ((weak, alias("PDALEC_Error")));
+#else
+#define DALEC_Error PDALEC_Error
+#endif
+
+/* -- End Profiling Symbol Block */
 /** Fatal error, print the message and abort the program with the provided
   * error code.
   */

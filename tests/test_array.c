@@ -16,7 +16,9 @@ int main(int argc, char ** argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &nproc);
 
-    if (rank == 0) printf("Starting DALEC Init/Final test with %d processes\n", nproc);
+    if (rank == 0) printf("Starting DALEC array test with %d processes\n", nproc);
+
+
 
     DALEC_Finalize();
     MPI_Finalize();

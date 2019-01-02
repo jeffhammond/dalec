@@ -135,11 +135,11 @@ AX_GCC_FUNC_ATTRIBUTE(noreturn)
 ## Debugging support
 AC_ARG_ENABLE(g, AC_HELP_STRING([--enable-g],[Enable Debugging]),
                  [ debug=$enableval ],
-                 [ debug=no ])
+                 [ debug=yes ])
 AC_MSG_CHECKING(debugging support)
 AC_MSG_RESULT($debug)
 if test "$debug" = "yes"; then
-   CFLAGS="$CFLAGS -g -O0"
+   CFLAGS="$CFLAGS -g3"
 fi
 
 ## Safety checks

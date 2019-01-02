@@ -15,6 +15,8 @@
 #pragma _CRI duplicate DALEC_Create_array as PDALEC_Create_array
 #elif defined(HAVE_WEAK_ATTRIBUTE)
 int DALEC_Create_array(const DALEC_Array_descriptor * d, DALEC_Array_handle * h) __attribute__ ((weak, alias("PDALEC_Create_array")));
+#else
+#define DALEC_Create_array PDALEC_Create_array
 #endif
 /* -- End Profiling Symbol Block */
 
@@ -93,6 +95,10 @@ int DALEC_Create_array(const DALEC_Array_descriptor * d, DALEC_Array_handle * h)
 #  pragma _HP_SECONDARY_DEF DALEC_Destroy_array DALEC_Destroy_array
 #elif defined(HAVE_PRAGMA_CRI_DUP)
 #  pragma _CRI duplicate DALEC_Destroy_array as DALEC_Destroy_array
+#elif defined(HAVE_WEAK_ATTRIBUTE)
+int DALEC_Destroy_array(DALEC_Array_handle * h) __attribute__ ((weak, alias("PDALEC_Destroy_array")));
+#else
+#define DALEC_Destroy_array PDALEC_Destroy_array
 #endif
 /* -- end weak symbols block -- */
 
