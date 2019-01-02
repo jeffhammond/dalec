@@ -11,6 +11,7 @@ lib_LTLIBRARIES = libdalec.la
 noinst_LTLIBRARIES = libdaleci.la
 
 libdalec_la_SOURCES = src/init_finalize.c \
+		      src/array.c	  \
 		      src/debug.c	  \
 		      src/util.c	  \
 		      src/pdalec.c
