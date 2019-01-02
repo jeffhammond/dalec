@@ -5,20 +5,18 @@
 #ifndef _DALEC_H_
 #define _DALEC_H_
 
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ == 201112L)
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
+/* this only fails if the C compiler lies about having full C11 support */
 #include <stdnoreturn.h>
 #define DALEC_NORETURN_PREFIX noreturn
 #define DALEC_NORETURN_SUFFIX
-#elif defined (__GNUC__)
+#elif defined (__GNUC__) && (__GNUC__ >= 3)
+/* this attribute was introduced in GCC 2.5 */
 #define DALEC_NORETURN_PREFIX
 #define DALEC_NORETURN_SUFFIX __attribute__((noreturn))
 #endif
 
 #include <mpi.h>
-
-#define DALECI_CHECK_MPI(rc) do { \
-                                  \
-} while(0);
 
 enum {
     DALEC_SUCCESS = 0,
@@ -27,7 +25,11 @@ enum {
     DALEC_ERROR_MPI_USAGE = 4
 } dalec_rc_t;
 
-#define DALEC_ARRAY_MAX_DIM 3
+/* This becomes part of the ABI.  If this is undesirable, we can instead
+ * use pointers for dims and blocksizes, but this will add overhead
+ * because every use will have to dereference a heap pointer. */
+
+#define DALEC_ARRAY_MAX_DIM 4
 
 typedef struct DALEC_Array_descriptor {
     MPI_Comm comm;
@@ -39,27 +41,31 @@ typedef struct DALEC_Array_descriptor {
 } DALEC_Array_descriptor;
 
 typedef struct DALEC_Array_handle {
-   MPI_Win win;
+    MPI_Win win;
+    MPI_Datatype type;
+    int ndim;
+    size_t dims[DALEC_ARRAY_MAX_DIM];
+    size_t blocksizes[DALEC_ARRAY_MAX_DIM];
+#if 0
+    int win_keyval;
+#endif
 } DALEC_Array_handle;
 
-/* Public API */
+#ifndef _GENERATE_DALEC_PUBLIC_API_
+#define _GENERATE_DALEC_PUBLIC_API_
 
-int   DALEC_Initialize(MPI_Comm comm);
-int   DALEC_Finalize(void);
+#define DALEC_PUBLIC_API
+#include "dalec_api.h"
+#undef DALEC_PUBLIC_API
 
-DALEC_NORETURN_PREFIX void  DALEC_Error(const char *msg, int code) DALEC_NORETURN_SUFFIX;
+#endif /* _GENERATE_DALEC_PUBLIC_API_ */
 
-int   DALEC_Create_array(const DALEC_Array_descriptor *, DALEC_Array_handle *);
-int   DALEC_Destroy_array(DALEC_Array_handle *);
+#ifndef _GENERATE_DALEC_PROFILE_API_
+#define _GENERATE_DALEC_PROFILE_API_
 
-/* PDALEC -- Profiling Interface */
+#define DALEC_PROFILE_API
+#include "dalec_api.h"
 
-int   PDALEC_Initialize(MPI_Comm comm);
-int   PDALEC_Finalize(void);
-
-DALEC_NORETURN_PREFIX void PDALEC_Error(const char *msg, int code) DALEC_NORETURN_SUFFIX;
-
-int   PDALEC_Create_array(const DALEC_Array_descriptor *, DALEC_Array_handle *);
-int   PDALEC_Destroy_array(DALEC_Array_handle *);
+#endif /* _GENERATE_DALEC_PROFILE_API_ */
 
 #endif /* _DALEC_H_ */

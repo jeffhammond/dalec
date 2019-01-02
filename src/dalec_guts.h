@@ -5,8 +5,8 @@
 #ifndef HAVE_DALEC_GUTS_H
 #define HAVE_DALEC_GUTS_H
 
-#include <dalec.h>
 #include <dalecconf.h>
+#include <dalec.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,6 +26,8 @@
 #else
 #error C11 atomics are required for now.
 #endif
+
+#define DALECI_QUOTE_STRING(A) #A
 
 /* Likely/Unlikely macros borrowed from MPICH: */
 
@@ -69,7 +71,7 @@ extern dalec_global_state_t DALECI_GLOBAL_STATE;
 
 /* Utility functions */
 
-int    DALECI_Check_MPI(const char * dfn, const char * mpifn, int mpirc);
+int    DALECI_Check_MPI(const char * dalecfn, const char * mpifn, int mpirc);
 char * DALECI_Getenv(const char *varname);
 int    DALECI_Getenv_bool(const char *varname, int default_value);
 int    DALECI_Getenv_int(const char *varname, int default_value);

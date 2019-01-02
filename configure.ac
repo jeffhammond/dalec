@@ -128,6 +128,10 @@ fi
 AC_CHECK_HEADERS([execinfo.h stdint.h stdatomic.h inttypes.h])
 AC_TYPE_UINT8_T
 
+# do we have noreturn from C11 or GCC?
+AC_CHECK_HEADERS([stdnoreturn.h])
+AX_GCC_FUNC_ATTRIBUTE(noreturn)
+
 ## Debugging support
 AC_ARG_ENABLE(g, AC_HELP_STRING([--enable-g],[Enable Debugging]),
                  [ debug=$enableval ],

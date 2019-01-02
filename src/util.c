@@ -17,9 +17,11 @@ void DALEC_Error(const char *msg, int code)
     fprintf(stderr, "[%d] DALEC Error: %s\n", rank, msg);
     fflush(NULL);
 
+    /* MPI_Abort does not have noreturn declaration but C abort does,
+     * so even though abort() is unreachable, it ensures tools understand
+     * the behavior of this function. */
     MPI_Abort(DALECI_GLOBAL_STATE.mpi_comm, code);
-
-    return;
+    abort();
 }
 
 /** MPI error message
@@ -35,7 +37,7 @@ int DALECI_Check_MPI(const char * dfn, const char * mpifn, int mpirc)
 
         int len;
         char errmsg[MPI_MAX_ERROR_STRING];
-        MPI_Error_string(mpirc, &errmsg, &len);
+        MPI_Error_string(mpirc, errmsg, &len);
 
         DALECI_Warning("%d: %s -> %s:\n %s \n", rank, dfn, mpifn, errmsg);
 
