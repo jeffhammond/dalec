@@ -125,7 +125,7 @@ if test "$ac_cv_prog_cc_c99" = "no" ; then
    AC_ERROR([C99 not supported by the compiler])
 fi
 
-AC_CHECK_HEADERS([stdio.h stdlib.h string.h strings.h assert.h malloc.h execinfo.h stdint.h stdbool.h stdatomic.h inttypes.h unistd.h])
+AC_CHECK_HEADERS([stdio.h stdlib.h string.h strings.h assert.h malloc.h execinfo.h stdint.h stdbool.h stdatomic.h inttypes.h unistd.h math.h])
 AC_TYPE_UINT8_T
 
 # do we have noreturn from C11 or GCC?

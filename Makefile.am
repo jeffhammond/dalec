@@ -11,10 +11,11 @@ lib_LTLIBRARIES = libdalec.la
 noinst_LTLIBRARIES = libdaleci.la
 
 libdalec_la_SOURCES = src/init_finalize.c \
-		      src/array.c	  \
-		      src/debug.c	  \
-		      src/util.c	  \
-		      src/pdalec.c
+                      src/array.c         \
+                      src/debug.c         \
+                      src/util.c          \
+                      src/ddb.c           \
+                      src/pdalec.c
 
 libdalec_la_LDFLAGS = -version-info $(libdalec_abi_version)
 
