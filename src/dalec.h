@@ -36,7 +36,7 @@ typedef struct DALEC_Array_descriptor {
     MPI_Datatype type;
     int ndim;
     size_t dims[DALEC_ARRAY_MAX_DIM];
-    size_t blocksizes[DALEC_ARRAY_MAX_DIM];
+    size_t blks[DALEC_ARRAY_MAX_DIM];
     char * name;
 } DALEC_Array_descriptor;
 

@@ -8,8 +8,9 @@
 /* Set the default debugging message classes to enable.
  */
 unsigned DEBUG_CATS_ENABLED = 
-    DEBUG_CAT_NONE;
+    // DEBUG_CAT_NONE;
     // DEBUG_CAT_ALL;
+    DEBUG_CAT_ARRAY_DIST;
     // DEBUG_CAT_ALLOC;
     // DEBUG_CAT_ALLOC | DEBUG_CAT_MEM_REGION;
     // DEBUG_CAT_MUTEX;

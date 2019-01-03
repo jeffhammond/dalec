@@ -20,7 +20,6 @@ int DALEC_Finalize(void) {
 #pragma weak DALEC_Error
 void DALEC_Error(const char *msg, int code) {
   PDALEC_Error(msg, code);
-  return;
 }
 
 #pragma weak DALEC_Create_array

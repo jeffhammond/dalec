@@ -5,11 +5,17 @@
 #ifndef HAVE_DALEC_GUTS_H
 #define HAVE_DALEC_GUTS_H
 
-#include <dalecconf.h>
-#include <dalec.h>
+#include "dalecconf.h"
+#include "dalec.h"
+#include "debug.h"
 
+#if   HAVE_STDIO_H
 #include <stdio.h>
+#endif
+
+#if   HAVE_STDLIB_H
 #include <stdlib.h>
+#endif
 
 #if   HAVE_STRING_H
 #include <string.h>
@@ -25,6 +31,12 @@
 #  include <stdatomic.h>
 #else
 #error C11 atomics are required for now.
+#endif
+
+#if HAVE_STDBOOL_H
+#  include <stdbool.h>
+#else
+#error C11 boolean is required for now.
 #endif
 
 #define DALECI_QUOTE_STRING(A) #A

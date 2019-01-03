@@ -125,12 +125,14 @@ if test "$ac_cv_prog_cc_c99" = "no" ; then
    AC_ERROR([C99 not supported by the compiler])
 fi
 
-AC_CHECK_HEADERS([execinfo.h stdint.h stdatomic.h inttypes.h])
+AC_CHECK_HEADERS([stdio.h stdlib.h string.h strings.h assert.h malloc.h execinfo.h stdint.h stdbool.h stdatomic.h inttypes.h unistd.h])
 AC_TYPE_UINT8_T
 
 # do we have noreturn from C11 or GCC?
 AC_CHECK_HEADERS([stdnoreturn.h])
 AX_GCC_FUNC_ATTRIBUTE(noreturn)
+
+AX_PTHREAD([AC_DEFINE(HAVE_PTHREADS,1,[Defined when Pthread library is detected])])
 
 ## Debugging support
 AC_ARG_ENABLE(g, AC_HELP_STRING([--enable-g],[Enable Debugging]),

@@ -12,8 +12,8 @@
 enum debug_cats_e {
   DEBUG_CAT_ALL        =  -1,
   DEBUG_CAT_NONE       =   0,
-  DEBUG_CAT_MEM_REGION = 0x1,  // 2^0
-  DEBUG_CAT_ALLOC      = 0x2   // 2^1
+  DEBUG_CAT_ARGS       = 0x1,
+  DEBUG_CAT_ARRAY_DIST = 0x2,
 };
 
 /* A logical OR of the debug message categories that are enabled.  */

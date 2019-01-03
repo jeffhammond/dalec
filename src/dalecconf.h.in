@@ -9,6 +9,9 @@
 #define _DALECCONF_H_
 
 
+/* Define to 1 if you have the <assert.h> header file. */
+#undef HAVE_ASSERT_H
+
 /* define if the compiler defines __FUNC__ */
 #undef HAVE_CAP__FUNC__
 
@@ -27,6 +30,9 @@
 /* Define if C99-style variable argument list macro functionality */
 #undef HAVE_MACRO_VA_ARGS
 
+/* Define to 1 if you have the <malloc.h> header file. */
+#undef HAVE_MALLOC_H
+
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
@@ -42,11 +48,23 @@
 /* Supports weak pragma */
 #undef HAVE_PRAGMA_WEAK
 
+/* Defined when Pthread library is detected */
+#undef HAVE_PTHREADS
+
+/* Have PTHREAD_PRIO_INHERIT. */
+#undef HAVE_PTHREAD_PRIO_INHERIT
+
 /* Define to 1 if you have the <stdatomic.h> header file. */
 #undef HAVE_STDATOMIC_H
 
+/* Define to 1 if you have the <stdbool.h> header file. */
+#undef HAVE_STDBOOL_H
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#undef HAVE_STDIO_H
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
@@ -101,6 +119,10 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* Define to necessary symbol if this constant uses a non-standard name on
+   your system. */
+#undef PTHREAD_CREATE_JOINABLE
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS

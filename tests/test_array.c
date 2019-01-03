@@ -18,7 +18,47 @@ int main(int argc, char ** argv) {
 
     if (rank == 0) printf("Starting DALEC array test with %d processes\n", nproc);
 
+    {
+        DALEC_Array_descriptor d = { .comm = MPI_COMM_WORLD,
+                                     .type = MPI_DOUBLE,
+                                     .ndim = 1,
+                                     .dims = {1000},
+                                     .blks = {0},
+                                     .name = "test array 1" };
+        DALEC_Array_handle h;
+        DALEC_Create_array(&d, &h);
+        DALEC_Destroy_array(&h);
+    }
 
+    MPI_Barrier(MPI_COMM_WORLD); fflush(stdout); fflush(stderr); MPI_Barrier(MPI_COMM_WORLD);
+
+    if (rank == 0) printf("==========================\n");
+    {
+        DALEC_Array_descriptor d = { .comm = MPI_COMM_WORLD,
+                                     .type = MPI_DOUBLE,
+                                     .ndim = 1,
+                                     .dims = {1000},
+                                     .blks = {70},
+                                     .name = "test array 2" };
+        DALEC_Array_handle h;
+        DALEC_Create_array(&d, &h);
+        DALEC_Destroy_array(&h);
+    }
+
+    MPI_Barrier(MPI_COMM_WORLD); fflush(stdout); fflush(stderr); MPI_Barrier(MPI_COMM_WORLD);
+
+    if (rank == 0) printf("==========================\n");
+    {
+        DALEC_Array_descriptor d = { .comm = MPI_COMM_WORLD,
+                                     .type = MPI_DOUBLE,
+                                     .ndim = 1,
+                                     .dims = {1000},
+                                     .blks = {25},
+                                     .name = "test array 3" };
+        DALEC_Array_handle h;
+        DALEC_Create_array(&d, &h);
+        DALEC_Destroy_array(&h);
+    }
 
     DALEC_Finalize();
     MPI_Finalize();
