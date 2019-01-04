@@ -40,6 +40,7 @@ int DALEC_Create_array(const DALEC_Array_descriptor * d, DALEC_Array_handle * h)
     }
 
     const int ndim = d->ndim;
+    const MPI_Comm comm = d->comm;
 
     /* print arguments (debug mode) */
     if (DEBUG_CAT_ENABLED(DEBUG_CAT_ARGS)) {
@@ -50,7 +51,7 @@ int DALEC_Create_array(const DALEC_Array_descriptor * d, DALEC_Array_handle * h)
 #else
 #error Unknown MPI handle format (i.e. not MPICH or Open-MPI)
 #endif
-        DALECI_Dbg_print(DEBUG_CAT_ARGS, "MPI_Comm     = " HANDLE_FORMAT "\n", d->comm);
+        DALECI_Dbg_print(DEBUG_CAT_ARGS, "MPI_Comm     = " HANDLE_FORMAT "\n", comm);
         DALECI_Dbg_print(DEBUG_CAT_ARGS, "MPI_Datatype = " HANDLE_FORMAT "\n", d->type);
 
         DALECI_Dbg_print(DEBUG_CAT_ARGS, "ndim = %d\n", ndim);
@@ -85,14 +86,50 @@ int DALEC_Create_array(const DALEC_Array_descriptor * d, DALEC_Array_handle * h)
         }
 
         for (int i=0; i<ndim; i++) {
-            int dim = d->dims[i];
-            int blk = d->blks[i];
+            const size_t dim = d->dims[i];
+            const size_t blk = d->blks[i];
             if (dim < 1) {
-                DALECI_Error("dims[%d] = %d < 1", ndim, dim);
+                DALECI_Error("dims[%d] = %zu < 1", i, dim);
                 return DALEC_INPUT_ERROR;
             }
-            if (blk < 0) {
-                DALECI_Error("blks[%d] = %d < 0", ndim, blk);
+            if (blk > dim) {
+                DALECI_Error("blks[%d] (%zu) > dims[%d] (%zu)", i, blk, i, dim);
+                return DALEC_INPUT_ERROR;
+            }
+        }
+
+        /* check to make sure all calling processes gave the same arguments */
+
+#define DALEC_ARGS_COUNT 2+4*DALEC_ARRAY_MAX_DIM
+
+        int64_t args[DALEC_ARGS_COUNT] = {0};
+        args[0] =  ndim;
+        args[1] = -ndim;
+        for (int i=0; i<ndim; i++) {
+            const size_t dim = d->dims[i];
+            const size_t blk = d->blks[i];
+            args[2+4*i+0] =  dim;
+            args[2+4*i+1] = -dim;
+            args[2+4*i+2] =  blk;
+            args[2+4*i+3] = -blk;
+        }
+
+        int rc = MPI_Allreduce(MPI_IN_PLACE, args, DALEC_ARGS_COUNT, MPI_INT64_T, MPI_MAX, comm);
+        DALECI_Check_MPI(FCNAME, "MPI_Reduce", rc);
+
+#undef DALEC_ARGS_COUNT
+
+        if (args[0] != -args[1]) {
+            DALECI_Error("ndim (%d) is not constant across ranks", ndim);
+            return DALEC_INPUT_ERROR;
+        }
+        for (int i=0; i<ndim; i++) {
+            if (args[2+4*i+0] != -args[2+4*i+1]) {
+                DALECI_Error("dims[%d] (%zu) is not constant across ranks", i, d->dims[i]);
+                return DALEC_INPUT_ERROR;
+            }
+            if (args[2+4*i+2] != -args[2+4*i+3]) {
+                DALECI_Error("blks[%d] (%zu) is not constant across ranks", i, d->blks[i]);
                 return DALEC_INPUT_ERROR;
             }
         }
@@ -112,8 +149,6 @@ int DALEC_Create_array(const DALEC_Array_descriptor * d, DALEC_Array_handle * h)
     /* allocate the window for this array */
     {
         MPI_Aint win_size = 0;
-
-        const MPI_Comm comm = d->comm;
 
         int type_size = 0;
         rc = MPI_Type_size(d->type, &type_size);
